@@ -1,24 +1,62 @@
 cmake_minimum_required(VERSION 3.16)
-project(minesweeper LANGUAGES CXX)
+project(Minesweeper)
 
-option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
-FetchContent_Declare(SFML
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 2.6.x)
-FetchContent_MakeAvailable(SFML)
+# Find SFML (try different versions)
+find_package(SFML 2.5 REQUIRED COMPONENTS system window graphics network audio)
 
-add_executable(${PROJECT_NAME} minesweeper.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system sfml-audio)
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+# Add your source files
+add_executable(${PROJECT_NAME} 
+    src/boards/testboard1.brd
+    src/boards/testboard2.brd
+    src/boards/testboard3.brd
+    src/minesweeper.cpp
+    src/minesweeper.h
+    src/GameState.cpp
+    src/GameState.h
+    src/Tile.cpp
+    src/Tile.h
+    src/Button.cpp
+    src/Button.h
+    src/Toolbox.h
+)
 
+# Link SFML libraries
+target_link_libraries(${PROJECT_NAME} 
+    sfml-system 
+    sfml-window 
+    sfml-graphics 
+    sfml-network 
+    sfml-audio
+)
+
+# Copy resources to build directory (optional)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+# Platform-specific settings
 if(WIN32)
-    add_custom_command(
-        TARGET ${PROJECT_NAME}
-        COMMENT "Copy OpenAL DLL"
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        VERBATIM)
+    # Copy SFML DLLs to output directory on Windows
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:sfml-system>
+        $<TARGET_FILE:sfml-window>
+        $<TARGET_FILE:sfml-graphics>
+        $<TARGET_FILE:sfml-network>
+        $<TARGET_FILE:sfml-audio>
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 endif()
 
-install(TARGETS ${PROJECT_NAME})
+# Set output directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+# Debug/Release configurations
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_definitions(DEBUG)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_compile_definitions(NDEBUG)
+endif()
