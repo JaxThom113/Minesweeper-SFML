@@ -89,7 +89,7 @@ int launch()
 {
     restart();
 
-    toolbox.window.create(sf::VideoMode(800, 600), "P4 - Minesweeper, Jaxon Kundrat");
+    toolbox.window.create(sf::VideoMode(800, 600), "P4 - Minesweeper");
 
     bool clicking = false;
 
