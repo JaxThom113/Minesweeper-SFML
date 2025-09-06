@@ -32,7 +32,7 @@ target_link_libraries(${PROJECT_NAME}
 
 # Copy images/ and boards/ to build directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/boards DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/boards DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Platform-specific settings
 if(WIN32)
