@@ -10,9 +10,6 @@ find_package(SFML 2.5 REQUIRED COMPONENTS system window graphics network audio)
 
 # Add your source files
 add_executable(${PROJECT_NAME} 
-    src/boards/testboard1.brd
-    src/boards/testboard2.brd
-    src/boards/testboard3.brd
     src/minesweeper.cpp
     src/minesweeper.h
     src/GameState.cpp
@@ -33,8 +30,9 @@ target_link_libraries(${PROJECT_NAME}
     sfml-audio
 )
 
-# Copy resources to build directory (optional)
+# Copy images/ and boards/ to build directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/boards DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Platform-specific settings
 if(WIN32)
